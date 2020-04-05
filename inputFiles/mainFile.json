@@ -1,0 +1,44 @@
+{
+  "automata": {
+    "alphabets": [
+      "a",
+      "b"
+    ],
+    "states": [
+      {
+        "name": "q0",
+        "positionX": "20",
+        "positionY": "20"
+      },
+      {
+        "name": "q1",
+        "positionX": "20",
+        "positionY": "40"
+      }
+    ],
+    "initialState": "q0",
+    "finalStates": {
+      "q1"
+    },
+    "transition": [
+      {
+        "name": "transition1",
+        "source": "q0",
+        "destination": "q0",
+        "label": "a1"
+      },
+      {
+        "name": "transition2",
+        "source": "q0",
+        "destination": "q1",
+        "label": "a2"
+      },
+      {
+        "name": "transition3",
+        "source": "q1",
+        "destination": "q1",
+        "label": "a3"
+      }
+    ]
+  }
+}
