@@ -1,6 +1,7 @@
 import org.json.simple.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Automata {
     ////////////ATTRIBUTES//////////////
@@ -170,6 +171,15 @@ public class Automata {
         return jsonObject;
     }
 
+    String analyze() {
+        Iterator itr = transitions.iterator();
+        while (itr.hasNext()) {
+            String[] reg = ((Transition) itr.next()).getDestination().split(" ");
+            if (reg.length > 2) return "NFA";
+            if (reg.length == 2 && reg[0].equals(" ")) return "NFA";
+        }
+        return "DFA";
+    }
 
     void addToAlphabets(String alphabet) {
         this.alphabets.add(alphabet);

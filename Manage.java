@@ -2,7 +2,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,7 +37,7 @@ public class Manage {
     public Manage() {
         this.automatas = new ArrayList<>();
         ///set up source in filaPath Attributes
-        this.filePath = "E:\\University Courses\\Term 4\\Formal Languages and Automata\\Projects\\project\\src\\project01\\file.json";
+        this.filePath = "E:\\University Courses\\Term 4\\Formal Languages and Automata\\Projects\\Project01-DFA analyze\\src\\inputFiles\\file.json";
         this.array = new JSONArray();
         this.jsonObject = new JSONObject();
         this.automataStrings = new ArrayList<>();

@@ -10,11 +10,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+
 //TODO create open scene function
 //TODO create ClearData buttons and action
-class Graphic extends Application {
+public class Graphic extends Application {
     Manage manage = new Manage();
 
     Stage stage;
@@ -289,9 +291,9 @@ class Graphic extends Application {
             final_text.setPromptText(final_text.getText());
             final_text.clear();
             //////////////////////////////////////////
-            if (!manage.addToAutomatas(automata)){
+            if (!manage.addToAutomatas(automata)) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("\""+automata.getName()+"\"" + "already exists!");
+                alert.setContentText("\"" + automata.getName() + "\"" + "already exists!");
                 alert.show();
             }
 
@@ -308,6 +310,7 @@ class Graphic extends Application {
         return new ArrayList<>(Arrays.asList(strings));
     }
 
+
     Scene mainScene() {
         Button open = makeButton("Open");
         Button clearData = makeButton("Clear Data");
@@ -316,7 +319,16 @@ class Graphic extends Application {
 
         //Actions
         add.setOnAction(event -> stage.setScene(addScene()));
-
+        close.setOnAction(event -> stage.close());
+        clearData.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.show();
+            alert.setContentText("Are You Sure To Delete All Information?");
+            if (alert.isShowing())
+                if (alert.getResult().getText().equals("OK"))
+                    manage.clearAllData();
+                else alert.close();
+        });
         FlowPane pane = makeFlowPane(Orientation.VERTICAL);
         pane.getStyleClass().add("pane");
         pane.getChildren().addAll(open, add, clearData, close);
