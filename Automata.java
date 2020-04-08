@@ -237,6 +237,11 @@ class State {
     public void setPositionY(String positionY) {
         this.positionY = positionY;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.name.equals(((State) obj).name);
+    }
 }
 
 class Transition {
