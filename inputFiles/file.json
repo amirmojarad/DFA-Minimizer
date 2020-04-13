@@ -35,7 +35,7 @@
         "positionX": "20"
       },
       {
-        "positionY": "40",
+        "positionY": "100",
         "name": "q1",
         "positionX": "20"
       }
@@ -54,21 +54,15 @@
       {
         "name": "transition1",
         "destination": "q0",
-        "source": "q0",
-        "label": "a1"
+        "source": "q1",
+        "label": "b"
       },
       {
         "name": "transition2",
         "destination": "q1",
         "source": "q0",
-        "label": "a2"
+        "label": "a"
       },
-      {
-        "name": "transition3",
-        "destination": "q1",
-        "source": "q1",
-        "label": "a3"
-      }
     ],
     "states": [
       {
@@ -77,9 +71,9 @@
         "positionX": "20"
       },
       {
-        "positionY": "40",
+        "positionY": "20",
         "name": "q1",
-        "positionX": "20"
+        "positionX": "100"
       }
     ]
   }

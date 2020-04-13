@@ -2,6 +2,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,8 +38,7 @@ public class Manage {
      */
     public Manage() {
         this.automatas = new ArrayList<>();
-        ///set up source in filaPath Attributes
-        this.filePath = "E:\\University Courses\\Term 4\\Formal Languages and Automata\\Projects\\Project01-DFA analyze\\src\\inputFiles\\file.json";
+        this.filePath = "";
         this.array = new JSONArray();
         this.jsonObject = new JSONObject();
         this.automataStrings = new ArrayList<>();
@@ -48,8 +49,10 @@ public class Manage {
      * * Methods *
      * ***********
      */
+
     /**
      * in this function add an automata object to automatas list
+     *
      * @param automata this object add to {@link Manage#automatas}
      */
     boolean addToAutomatas(Automata automata) {
@@ -62,6 +65,7 @@ public class Manage {
 
     /**
      * saves all automatas that stored in automatas arrayList
+     *
      * @throws IOException
      */
     public void saveAll() throws IOException {
@@ -74,9 +78,8 @@ public class Manage {
     }
 
     /**
-     *
      * @param automata take an automata and convert it to a {@link JSONObject}
-     * @return  jsonObject that has all data in automata object
+     * @return jsonObject that has all data in automata object
      */
     JSONObject saveObj(Automata automata) {
         JSONObject object = new JSONObject();
@@ -89,7 +92,6 @@ public class Manage {
     }
 
     /**
-     *
      * @param automata takes automata and convert {@link Automata#getAlphabets()} to JSONArray obejct
      * @return a jsonArray object
      */
@@ -102,7 +104,6 @@ public class Manage {
 
 
     /**
-     *
      * @param automata takes automata and convert {@link Automata#getFinalStates()} to JSONArray obejct
      * @return a jsonArray object
      */
@@ -115,7 +116,6 @@ public class Manage {
 
 
     /**
-     *
      * @param automata takes automata and convert {@link Automata#getTransitions()} to JSONArray obejct
      * @return a jsonArray object
      */
@@ -127,7 +127,6 @@ public class Manage {
     }
 
     /**
-     *
      * @param transition takes a transition and convert it to JSONObject
      * @return jsonObject
      */
@@ -142,7 +141,6 @@ public class Manage {
 
 
     /**
-     *
      * @param automata takes automata and convert {@link Automata#getStates()} to JSONArray obejct
      * @return a jsonArray object
      */
@@ -155,9 +153,8 @@ public class Manage {
     }
 
     /**
-     *
-     * @params state takes a state and convert it to JSONObject
      * @return jsonObject
+     * @params state takes a state and convert it to JSONObject
      */
     JSONObject stateToObject(State state) {
         JSONObject object = new JSONObject();
@@ -173,13 +170,23 @@ public class Manage {
 
     /**
      * load all information that exist in file.json and stored in {@link Manage#jsonObject}
+     *
      * @throws ParseException
      * @throws IOException
      */
-    public void loadAll() throws ParseException, IOException {
+    public void loadAll() {
         JSONParser parser = new JSONParser();
-        FileReader reader = new FileReader(filePath);
-        this.jsonObject = (JSONObject) parser.parse(reader);
+        FileReader reader = null;
+        try {
+            reader = new FileReader(filePath);
+            this.jsonObject = (JSONObject) parser.parse(reader);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.automataStrings.addAll(jsonObject.keySet());
         convertToAutomata(jsonObject);
     }
@@ -188,7 +195,6 @@ public class Manage {
     //TODO done save and load and actions of programs
 
     /**
-     *
      * @param object takes an jsonObject and convert it to automata and stored in automatas list
      */
     void convertToAutomata(JSONObject object) {
@@ -201,8 +207,7 @@ public class Manage {
     }
 
     /**
-     *
-     * @param name gives a name (name of automata)
+     * @param name   gives a name (name of automata)
      * @param object convert this object to automata
      * @return
      */
@@ -218,8 +223,7 @@ public class Manage {
     }
 
     /**
-     *
-     * @param type could be transition, finalState, alphabets
+     * @param type      could be transition, finalState, alphabets
      * @param jsonArray convert this to a list that should be stored in autota object
      * @return an arrayList that setting up in automata's fields
      */
@@ -229,7 +233,7 @@ public class Manage {
             ArrayList<Transition> list = new ArrayList<>();
             while (itr.hasNext()) list.add(castToTransition((JSONObject) itr.next()));
             return list;
-        } else if (type.equals("finalStates")) {
+        } else if (type.equals("finalState")) {
             ArrayList<String> list = new ArrayList<>();
             while (itr.hasNext()) list.add((String) itr.next());
             return list;
@@ -246,7 +250,6 @@ public class Manage {
     }
 
     /**
-     *
      * @param object takes this and convert JSONObject to Transition Object
      * @return a transition object
      */
@@ -258,8 +261,8 @@ public class Manage {
         transition.setDestination((String) object.get("destination"));
         return transition;
     }
+
     /**
-     *
      * @param object takes this and convert JSONObject to State Object
      * @return a state object
      */
@@ -270,7 +273,8 @@ public class Manage {
         state.setName((String) object.get("name"));
         return state;
     }
-    void clearAllData(){
+
+    void clearAllData() {
         this.jsonObject.clear();
         this.automatas.clear();
         try {
@@ -315,6 +319,30 @@ public class Manage {
 
     public void setJsonObject(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
+    }
+
+    public Automata getAutomata(String name) {
+        for (Automata automata : automatas)
+            if (automata.getName().equals(name)) return automata;
+        return null;
+    }
+
+    public boolean isEmpty() {
+        if (filePath.length() == 0) return true;
+        JSONParser parser = new JSONParser();
+        FileReader reader = null;
+        try {
+            reader = new FileReader(filePath);
+            this.jsonObject = (JSONObject) parser.parse(reader);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (this.jsonObject.isEmpty()) return true;
+        return false;
     }
 
     public String getFilePath() {

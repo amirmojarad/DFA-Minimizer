@@ -1,43 +1,85 @@
 {
-  "automata": {
+  "automata2": {
     "alphabets": [
       "a",
       "b"
     ],
-    "states": [
-      {
-        "name": "q0",
-        "positionX": "20",
-        "positionY": "20"
-      },
-      {
-        "name": "q1",
-        "positionX": "20",
-        "positionY": "40"
-      }
-    ],
     "initialState": "q0",
-    "finalStates": {
+    "finalState": [
       "q1"
-    },
-    "transition": [
+    ],
+    "transitions": [
       {
         "name": "transition1",
-        "source": "q0",
         "destination": "q0",
+        "source": "q0",
         "label": "a1"
       },
       {
         "name": "transition2",
-        "source": "q0",
         "destination": "q1",
+        "source": "q0",
         "label": "a2"
       },
       {
         "name": "transition3",
-        "source": "q1",
         "destination": "q1",
+        "source": "q1",
         "label": "a3"
+      }
+    ],
+    "states": [
+      {
+        "positionY": "20",
+        "name": "q0",
+        "positionX": "20"
+      },
+      {
+        "positionY": "40",
+        "name": "q1",
+        "positionX": "20"
+      }
+    ]
+  },
+  "automata1": {
+    "alphabets": [
+      "a",
+      "b"
+    ],
+    "initialState": "q0",
+    "finalState": [
+      "q1"
+    ],
+    "transitions": [
+      {
+        "name": "transition1",
+        "destination": "q0",
+        "source": "q0",
+        "label": "a1"
+      },
+      {
+        "name": "transition2",
+        "destination": "q1",
+        "source": "q0",
+        "label": "a2"
+      },
+      {
+        "name": "transition3",
+        "destination": "q1",
+        "source": "q1",
+        "label": "a3"
+      }
+    ],
+    "states": [
+      {
+        "positionY": "20",
+        "name": "q0",
+        "positionX": "20"
+      },
+      {
+        "positionY": "40",
+        "name": "q1",
+        "positionX": "20"
       }
     ]
   }

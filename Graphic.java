@@ -6,19 +6,24 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 //TODO create open scene function
 //TODO create ClearData buttons and action
 public class Graphic extends Application {
     Manage manage = new Manage();
-
+    Graph graph = new Graph();
     Stage stage;
     Scene scene;
     Insets insets = new Insets(10, 10, 10, 10);
@@ -85,6 +90,14 @@ public class Graphic extends Application {
         return comboBox;
     }
 
+    private void openFunction() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName("file.json");
+        fileChooser.setInitialDirectory(new File("E:\\University Courses\\Term 4\\Formal Languages and Automata\\Projects\\Project01-DFA analyze\\src\\inputFiles"));
+        File file = fileChooser.showOpenDialog(stage);
+        manage.setFilePath(file.getPath());
+        manage.loadAll();
+    }
 
     //TODO make css
     //TODO make logic and ui connection
@@ -305,6 +318,25 @@ public class Graphic extends Application {
         return addScene;
     }
 
+    Scene showScene() {
+        Pane lowerPane = new Pane();
+        ComboBox<String> automatas = new ComboBox<>();
+        automatas.getItems().addAll(manage.getAutomataStrings());
+        Button submit = makeButton("Submit");
+        submit.setOnAction(event -> {
+            graph.setAutomata(manage.getAutomata(automatas.getSelectionModel().getSelectedItem()));
+            lowerPane.getChildren().add(graph.setConnection());
+        });
+        HBox upperBox = makeHBox();
+        upperBox.getChildren().addAll(automatas, submit);
+        Line separator = new Line(0, 200, 800, 200);
+        VBox mainBox = makeVBox();
+        mainBox.setAlignment(Pos.TOP_CENTER);
+        mainBox.getChildren().addAll(upperBox, separator, lowerPane);
+        Scene scene = new Scene(mainBox, 800, 700);
+        return scene;
+    }
+
     ArrayList<String> getList(String text) {
         String[] strings = text.split(" ");
         return new ArrayList<>(Arrays.asList(strings));
@@ -316,22 +348,39 @@ public class Graphic extends Application {
         Button clearData = makeButton("Clear Data");
         Button add = makeButton("Add");
         Button close = makeButton("Close");
-
+        Button show = makeButton("Show");
+        show.setDisable(true);
         //Actions
         add.setOnAction(event -> stage.setScene(addScene()));
         close.setOnAction(event -> stage.close());
         clearData.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.show();
-            alert.setContentText("Are You Sure To Delete All Information?");
-            if (alert.isShowing())
-                if (alert.getResult().getText().equals("OK"))
+            while (manage.isEmpty()) {
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                confirm.setContentText("Your selected directory is empty, do yo wanna choose another one?");
+                Optional<ButtonType> option = confirm.showAndWait();
+                if (option.get().equals(ButtonType.OK)) openFunction();
+                else break;
+            }
+            if (!manage.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                Optional<ButtonType> option = alert.showAndWait();
+                alert.setContentText("Are You Sure To Delete All Information?");
+                if (option.get().equals(ButtonType.OK)) {
                     manage.clearAllData();
-                else alert.close();
+                    Alert successful = new Alert(Alert.AlertType.INFORMATION);
+                    successful.setContentText("deleting successfully done!");
+                    successful.show();
+                }
+            }
         });
+        open.setOnAction(event -> {
+            openFunction();
+            if (!manage.isEmpty()) show.setDisable(false);
+        });
+        show.setOnAction(event -> stage.setScene(showScene()));
         FlowPane pane = makeFlowPane(Orientation.VERTICAL);
         pane.getStyleClass().add("pane");
-        pane.getChildren().addAll(open, add, clearData, close);
+        pane.getChildren().addAll(show, open, add, clearData, close);
         Scene scene = new Scene(pane, 500, 600);
         return scene;
     }
