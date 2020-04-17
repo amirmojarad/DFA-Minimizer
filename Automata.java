@@ -192,6 +192,11 @@ public class Automata {
     void addToTransition(Transition transition) {
         this.transitions.add(transition);
     }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }
 
 class State {
@@ -200,7 +205,9 @@ class State {
     ////////////////Constructors//////////////
 
     public State() {
-
+        this.name= "";
+        this.positionX= "";
+        this.positionY= "";
     }
 
     public State(String name) {
@@ -239,6 +246,11 @@ class State {
     }
 
     @Override
+    public String toString() {
+        return this.getName();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         return this.name.equals(((State) obj).name);
     }
@@ -250,6 +262,12 @@ class Transition {
     /////////////////Constructors//////////////////
 
     public Transition() {
+    }
+
+    public Transition(String source, String destination, String label) {
+        this.source = source;
+        this.destination = destination;
+        this.label = label;
     }
 
     public Transition(String name, String source, String destination, String label) {
@@ -292,10 +310,17 @@ class Transition {
         this.label = label;
     }
 
+    @Override
+    public String toString() {
+        return this.source + "->" + this.destination;
+    }
 
     @Override
     public boolean equals(Object obj) {
-        return !this.getName().equals(((Automata) obj).getName());
+        Transition temp = (Transition) obj;
+        return temp.getSource().equals(this.getSource()) &&
+                temp.getDestination().equals(this.getDestination()) &&
+                temp.getLabel().equals(this.getLabel());
     }
 }
 

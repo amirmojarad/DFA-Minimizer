@@ -1,3 +1,10 @@
+import com.brunomnsilva.smartgraph.graph.Digraph;
+import com.brunomnsilva.smartgraph.graph.DigraphEdgeList;
+import com.brunomnsilva.smartgraph.graph.Graph;
+import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
+import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
+import com.brunomnsilva.smartgraph.graphview.SmartRandomPlacementStrategy;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -18,15 +25,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.Flow;
 
 //TODO create open scene function
 //TODO create ClearData buttons and action
 public class Graphic extends Application {
     Manage manage = new Manage();
-    Graph graph = new Graph();
     Stage stage;
     Scene scene;
     Insets insets = new Insets(10, 10, 10, 10);
+
+    SmartGraphPanel<String, String> graphView;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -318,24 +328,62 @@ public class Graphic extends Application {
         return addScene;
     }
 
+
     Scene showScene() {
-        Pane lowerPane = new Pane();
-        ComboBox<String> automatas = new ComboBox<>();
-        automatas.getItems().addAll(manage.getAutomataStrings());
-        Button submit = makeButton("Submit");
+        ComboBox<String> automatas = makeComboBox();
+        automatas.setPrefSize(120, 50);
+        automatas.getItems().addAll(this.manage.getAutomataStrings());
+        Button submit = makeButton("submit");
+
+        RadioButton radioButton = new RadioButton("Minimize");
+        ToggleGroup tg = new ToggleGroup();
+        tg.getToggles().add(radioButton);
+
+        HBox upperSection = makeHBox();
+        upperSection.getChildren().addAll(automatas, radioButton, submit);
+
+        FlowPane pane = makeFlowPane(Orientation.HORIZONTAL);
+        pane.setAlignment(Pos.TOP_LEFT);
+        pane.getChildren().addAll(automatas,radioButton,submit);
+
         submit.setOnAction(event -> {
-            graph.setAutomata(manage.getAutomata(automatas.getSelectionModel().getSelectedItem()));
-            lowerPane.getChildren().add(graph.setConnection());
+            Automata automata = findAutomata(automatas.getSelectionModel().getSelectedItem());
+            if (tg.getSelectedToggle().isSelected()) {
+                DFA_Minimizer minimizer = new DFA_Minimizer(automata);
+                minimizer.minimize();
+                stage.setScene(new GraphMaker().scene(minimizer.getDfa()));
+            } else
+                stage.setScene(new GraphMaker().scene(automata));
         });
-        HBox upperBox = makeHBox();
-        upperBox.getChildren().addAll(automatas, submit);
-        Line separator = new Line(0, 200, 800, 200);
-        VBox mainBox = makeVBox();
-        mainBox.setAlignment(Pos.TOP_CENTER);
-        mainBox.getChildren().addAll(upperBox, separator, lowerPane);
-        Scene scene = new Scene(mainBox, 800, 700);
-        return scene;
+
+        return new Scene(pane, 400, 250);
     }
+
+    private Automata convertToUpperCase(Automata automata) {
+        for (State state : automata.getStates())
+            state.setName(state.getName().toUpperCase());
+        for (Transition transition : automata.getTransitions()) {
+            transition.setDestination(transition.getDestination().toUpperCase());
+            transition.setSource(transition.getSource().toUpperCase());
+            transition.setLabel(transition.getLabel().toUpperCase());
+        }
+        automata.setInitialState(automata.getInitialState().toUpperCase());
+       ArrayList<String> list = new ArrayList<>();
+        for (String s: automata.getFinalStates()){
+            list.add(s.toUpperCase());
+        }
+        automata.setFinalStates(list);
+        return automata;
+    }
+
+
+    private Automata findAutomata(String name) {
+        for (Automata automata : manage.getAutomatas()) {
+            if (automata.getName().equals(name)) return convertToUpperCase(automata);
+        }
+        return null;
+    }
+
 
     ArrayList<String> getList(String text) {
         String[] strings = text.split(" ");

@@ -1,0 +1,120 @@
+{
+  "DFA": {
+    "initialState": "q0",
+    "alphabets": [
+      "0",
+      "1"
+    ],
+    "transitions": [
+      {
+        "name": "t",
+        "destination": "q3",
+        "source": "q0",
+        "label": "0"
+      },
+      {
+        "name": "t",
+        "destination": "q1",
+        "source": "q0",
+        "label": "1"
+      },
+      {
+        "name": "t",
+        "destination": "q0",
+        "source": "q3",
+        "label": "0"
+      },
+      {
+        "name": "t",
+        "destination": "q4",
+        "source": "q3",
+        "label": "1"
+      },
+      {
+        "name": "t",
+        "destination": "q2",
+        "source": "q1",
+        "label": "0"
+      },
+      {
+        "name": "t",
+        "destination": "q5",
+        "source": "q1",
+        "label": "1"
+      },
+      {
+        "name": "t",
+        "destination": "q2",
+        "source": "q4",
+        "label": "0"
+      },
+      {
+        "name": "t",
+        "destination": "q5",
+        "source": "q4",
+        "label": "1"
+      },
+      {
+        "name": "t",
+        "destination": "q2",
+        "source": "q2",
+        "label": "0"
+      },
+      {
+        "name": "t",
+        "destination": "q5",
+        "source": "q2",
+        "label": "1"
+      },
+      {
+        "name": "t",
+        "destination": "q5",
+        "source": "q5",
+        "label": "0"
+      },
+      {
+        "name": "t",
+        "destination": "q5",
+        "source": "q5",
+        "label": "1"
+      }
+    ],
+    "finalState": [
+      "q4",
+      "q2",
+      "q1"
+    ],
+    "states": [
+      {
+        "positionY": "0",
+        "name": "q0",
+        "positionX": "0"
+      },
+      {
+        "positionY": "0",
+        "name": "q1",
+        "positionX": "0"
+      },
+      {
+        "positionY": "0",
+        "name": "q2",
+        "positionX": "0"
+      },
+      {
+        "positionY": "0",
+        "name": "q3",
+        "positionX": "0"
+      },
+      {
+        "positionY": "0",
+        "name": "q4",
+        "positionX": "0"
+      },
+      {
+        "positionY": "0",
+        "name": "q5",
+        "positionX": "0"
+      }
+    ]
+  }
+}
