@@ -12,19 +12,26 @@ public class GraphMaker {
     SmartPlacementStrategy strategy;
     SmartGraphPanel<String, String> graphView;
     SmartGraphDemoContainer container;
-    Scene scene(Automata automata) {
+
+    Object[] scene(Automata automata) {
+        Object objects[] = new Object[2];
         graph = build_sample_digraph(automata);
         strategy = new SmartCircularSortedPlacementStrategy();
         graphView = new SmartGraphPanel<>(graph, strategy);
         container = new SmartGraphDemoContainer(graphView);
-        Scene scene = new Scene(container, 1200,700);
-        return scene;
+        for(String s: automata.getFinalStates()){
+            graphView.getStylableVertex(s).setStyle("-fx-fill: gold; -fx-stroke: brown;");
+        }
+        graphView.getStylableVertex(automata.getInitialState()).setStyle("-fx-fill: green; -fx-stroke: blue;");
+        Scene scene = new Scene(container, 1200, 700);
+        objects[0] = graphView;
+        objects[1] = scene;
+        return objects;
     }
 
 
     private Graph<String, String> build_sample_digraph(Automata automata) {
         Digraph<String, String> g = new DigraphEdgeList<>();
-//        Automata automata = makeAutoamta();
         for (State vertex : automata.getStates()) {
             g.insertVertex(vertex.getName());
         }
@@ -35,9 +42,15 @@ public class GraphMaker {
     }
 
 
+    static int counter = 0;
 
-    String makeEdge(Transition transition){
-        return transition.getSource()+"-"+transition.getDestination()+" "+transition.getLabel();
+    String makeEdge(Transition transition) {
+        StringBuilder s = new StringBuilder(transition.getLabel());
+        for (int i = 0; i < counter; i++)
+            s.append(" ");
+        counter++;
+        return s.toString();
+//        return transition.getSource() + "-" + transition.getDestination() + " " + transition.getLabel();
     }
 
 }

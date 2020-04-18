@@ -73,8 +73,10 @@ public class Main extends Application {
         Basic usage:            
         Use SmartGraphDemoContainer if you want zoom capabilities and automatic layout toggling
         */
-        Scene scene = new Scene(graphView, 1024, 768);
-//        Scene scene = new Scene(new SmartGraphDemoContainer(graphView), 1024, 768);
+//        Scene scene = new Scene(graphView, 1024, 768);
+        Scene scene = new Scene(new SmartGraphDemoContainer(graphView), 1024, 768);
+
+        continuously_test_adding_elements(g,graphView);
 
         Stage stage = new Stage(StageStyle.DECORATED);
         stage.setTitle("JavaFX SmartGraph Visualization");

@@ -1,10 +1,4 @@
-import com.brunomnsilva.smartgraph.graph.Digraph;
-import com.brunomnsilva.smartgraph.graph.DigraphEdgeList;
-import com.brunomnsilva.smartgraph.graph.Graph;
-import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
-import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
-import com.brunomnsilva.smartgraph.graphview.SmartRandomPlacementStrategy;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -13,38 +7,41 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.Flow;
 
-//TODO create open scene function
-//TODO create ClearData buttons and action
 public class Graphic extends Application {
+    //Attributes
     Manage manage = new Manage();
     Stage stage;
     Scene scene;
     Insets insets = new Insets(10, 10, 10, 10);
-
     SmartGraphPanel<String, String> graphView;
 
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        stage = primaryStage;
+        stage = new Stage(StageStyle.DECORATED);
+        stage.setTitle("DFA Minimizer");
         stage.setScene(mainScene());
         stage.show();
     }
 
+    /**
+     * create a usual Button component in this function with specific name
+     *
+     * @param name Button's name
+     * @return
+     */
     Button makeButton(String name) {
         Button button = new Button(name);
         button.setPrefSize(100, 25);
@@ -52,6 +49,11 @@ public class Graphic extends Application {
         return button;
     }
 
+    /**
+     * create a usual HBox component in this function
+     *
+     * @return
+     */
     HBox makeHBox() {
         HBox hBox = new HBox();
         hBox.setPadding(insets);
@@ -59,6 +61,13 @@ public class Graphic extends Application {
         hBox.setSpacing(10);
         return hBox;
     }
+
+
+    /**
+     * create a usual FlowPane component in this function
+     *
+     * @return
+     */
 
     FlowPane makeFlowPane(Orientation orientation) {
         FlowPane pane = new FlowPane();
@@ -70,6 +79,12 @@ public class Graphic extends Application {
         return pane;
     }
 
+    /**
+     * create a usual Label in this function
+     *
+     * @param text
+     * @return
+     */
     Label makeLabel(String text) {
         Label label = new Label(text);
         label.setAlignment(Pos.CENTER_LEFT);
@@ -78,6 +93,11 @@ public class Graphic extends Application {
         return label;
     }
 
+    /**
+     * create a usual TextField in this function
+     *
+     * @return
+     */
     TextField makeTextField() {
         TextField textField = new TextField();
         textField.setPrefSize(150, 25);
@@ -85,6 +105,11 @@ public class Graphic extends Application {
         return textField;
     }
 
+    /**
+     * create usual VBox in this function
+     *
+     * @return
+     */
     VBox makeVBox() {
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
@@ -93,6 +118,12 @@ public class Graphic extends Application {
         return vBox;
     }
 
+    /**
+     * create usual ComboBox component with specific Type <T>
+     *
+     * @param <T>
+     * @return
+     */
     <T> ComboBox<T> makeComboBox() {
         ComboBox<T> comboBox = new ComboBox<>();
         comboBox.setPrefSize(100, 25);
@@ -100,6 +131,9 @@ public class Graphic extends Application {
         return comboBox;
     }
 
+    /**
+     * open a json file from Directory and pass it to manage object to open and use it
+     */
     private void openFunction() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName("file.json");
@@ -109,8 +143,11 @@ public class Graphic extends Application {
         manage.loadAll();
     }
 
-    //TODO make css
-    //TODO make logic and ui connection
+    /**
+     * in this function craete a new FA machine (DFA)
+     *
+     * @return
+     */
     Scene addScene() {
         ArrayList<String> statesName = new ArrayList<>();
         ArrayList<String> final_list = new ArrayList<>();
@@ -328,7 +365,11 @@ public class Graphic extends Application {
         return addScene;
     }
 
-
+    /**
+     * showing a dfa (minimized or not)
+     *
+     * @return
+     */
     Scene showScene() {
         ComboBox<String> automatas = makeComboBox();
         automatas.setPrefSize(120, 50);
@@ -344,21 +385,36 @@ public class Graphic extends Application {
 
         FlowPane pane = makeFlowPane(Orientation.HORIZONTAL);
         pane.setAlignment(Pos.TOP_LEFT);
-        pane.getChildren().addAll(automatas,radioButton,submit);
+        pane.getChildren().addAll(automatas, radioButton, submit);
 
         submit.setOnAction(event -> {
             Automata automata = findAutomata(automatas.getSelectionModel().getSelectedItem());
-            if (tg.getSelectedToggle().isSelected()) {
-                DFA_Minimizer minimizer = new DFA_Minimizer(automata);
-                minimizer.minimize();
-                stage.setScene(new GraphMaker().scene(minimizer.getDfa()));
-            } else
-                stage.setScene(new GraphMaker().scene(automata));
+            if (tg.getSelectedToggle() != null) {
+                if (tg.getSelectedToggle().isSelected()) {
+                    DFA_Minimizer minimizer = new DFA_Minimizer(automata);
+                    minimizer.minimize();
+                    Object[] objects = new GraphMaker().scene(automata);
+                    stage.setScene((Scene) objects[1]);
+                    SmartGraphPanel<String, String> gv = (SmartGraphPanel<String, String>) objects[0];
+                    gv.init();
+                }
+            } else {
+                Object[] objects = new GraphMaker().scene(automata);
+                stage.setScene((Scene) objects[1]);
+                SmartGraphPanel<String, String> gv = (SmartGraphPanel<String, String>) objects[0];
+                gv.init();
+            }
         });
 
         return new Scene(pane, 400, 250);
     }
 
+    /**
+     * convert all autmata's attributes to upperCase for better showing in SmartGraph
+     *
+     * @param automata
+     * @return
+     */
     private Automata convertToUpperCase(Automata automata) {
         for (State state : automata.getStates())
             state.setName(state.getName().toUpperCase());
@@ -368,15 +424,20 @@ public class Graphic extends Application {
             transition.setLabel(transition.getLabel().toUpperCase());
         }
         automata.setInitialState(automata.getInitialState().toUpperCase());
-       ArrayList<String> list = new ArrayList<>();
-        for (String s: automata.getFinalStates()){
+        ArrayList<String> list = new ArrayList<>();
+        for (String s : automata.getFinalStates()) {
             list.add(s.toUpperCase());
         }
         automata.setFinalStates(list);
         return automata;
     }
 
-
+    /**
+     * step through among manage.automata and find an automata with specific name
+     *
+     * @param name
+     * @return
+     */
     private Automata findAutomata(String name) {
         for (Automata automata : manage.getAutomatas()) {
             if (automata.getName().equals(name)) return convertToUpperCase(automata);
@@ -384,13 +445,23 @@ public class Graphic extends Application {
         return null;
     }
 
+    /**
+     * take a string and split it by space and return a string array
+     *
+     * @param text
+     * @return
+     */
 
     ArrayList<String> getList(String text) {
         String[] strings = text.split(" ");
         return new ArrayList<>(Arrays.asList(strings));
     }
 
-
+    /**
+     * main scene in this function created
+     *
+     * @return
+     */
     Scene mainScene() {
         Button open = makeButton("Open");
         Button clearData = makeButton("Clear Data");

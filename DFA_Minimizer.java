@@ -1,18 +1,21 @@
-import java.lang.reflect.Array;
 import java.util.*;
 
+/**
+ * in this class minimize a dfa
+ * @author amirmojarad
+ * @version 1.1
+ */
 public class DFA_Minimizer {
     private Automata dfa;
     private ArrayList<Group> final_group;
     private ArrayList<Group> other_group;
     private ArrayList<State> final_states;
     private ArrayList<State> other_states;
-    private ArrayList<Transition> transitions;
 
+    //Constructors
     public DFA_Minimizer() {
         this.final_states = new ArrayList<>();
         this.other_states = new ArrayList<>();
-        this.transitions = new ArrayList<>();
         this.other_group = new ArrayList<>();
         this.final_group = new ArrayList<>();
     }
@@ -21,7 +24,11 @@ public class DFA_Minimizer {
         this();
         this.dfa = dfa;
     }
+    //Methods
 
+    /**
+     * in this function minimize dfa
+     */
     public void minimize() {
         delete_void_nodes();
         partition();
@@ -31,10 +38,13 @@ public class DFA_Minimizer {
         convertToGroup_other();
         minimize_other();
         change_other_transitions();
-        sortTransition();
+        sortDFA();
     }
 
-    private void sortTransition() {
+    /**
+     * after minimize sort dfa attribute to new dfa
+     */
+    private void sortDFA() {
         for (State state : dfa.getStates()) {
             for (Transition transition : dfa.getTransitions()) {
                 if (state.getName().contains(transition.getSource()))
@@ -44,17 +54,45 @@ public class DFA_Minimizer {
             }
         }
         ArrayList<Transition> new_transition = new ArrayList<>();
-        for (Transition t: dfa.getTransitions()){
+        for (Transition t : dfa.getTransitions()) {
             if (!new_transition.contains(t))
                 new_transition.add(t);
         }
         dfa.getTransitions().clear();
         dfa.setTransitions(new_transition);
+        ArrayList<String> finalStates = new ArrayList<>();
+        for (String string : dfa.getFinalStates())
+            for (State state : dfa.getStates())
+                if (state.getName().contains(string)) finalStates.add(state.getName());
+                else if (state.getName().contains(dfa.getInitialState())) dfa.setInitialState(state.getName());
+        dfa.setFinalStates(finalStates);
+        findDuplicateTransition();
+
     }
 
-    //using bfs algorithm
-    //has zero path to access to it from initial node(state)
+    /**
+     * find duplicate transition in minimized transition
+     */
+    void findDuplicateTransition() {
+        for (int i = 0; i < dfa.getTransitions().size(); i++) {
+            for (int j = i+1; j < dfa.getTransitions().size(); j++) {
+                if (dfa.getTransitions().get(i).getSource().equals(dfa.getTransitions().get(j).getSource())
+                        && dfa.getTransitions().get(i).getDestination().equals(dfa.getTransitions().get(j).getDestination())) {
+                    dfa.getTransitions().get(i).setLabel(dfa.getTransitions().get(i).getLabel() + "," + dfa.getTransitions().get(j).getLabel());
+                }
+            }
+        }
+    }
+
+    /**
+     * delete nodes that never has path from init nodes
+     * <p>
+     *     using bfs algorithm
+     * </p>
+     */
     private void delete_void_nodes() {
+        //using bfs algorithm
+        //has zero path to access to it from initial node(state)
         ArrayList<State> founded_states = new ArrayList<>();
         Queue<State> main_nodes = new ArrayDeque<>();
         main_nodes.add(find_state(dfa.getInitialState()));
@@ -178,11 +216,6 @@ public class DFA_Minimizer {
         other_group.add(group);
     }
 
-    //
-//    private void convertToAutomata(){
-//
-//    }
-//
     private State find_state(String state_name) {
         for (State state : dfa.getStates())
             if (state.getName().equals(state_name)) return state;
@@ -249,14 +282,6 @@ public class DFA_Minimizer {
 
     public void setOther_states(ArrayList<State> other_states) {
         this.other_states = other_states;
-    }
-
-    public ArrayList<Transition> getTransitions() {
-        return transitions;
-    }
-
-    public void setTransitions(ArrayList<Transition> transitions) {
-        this.transitions = transitions;
     }
 }
 
